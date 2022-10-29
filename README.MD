@@ -55,6 +55,60 @@ ping google.com -c 2
 
 ## 2. Untuk mempermudah mendapatkan informasi mengenai misi dari Handler, bantulah Loid membuat website utama dengan akses wise.yyy.com dengan alias www.wise.yyy.com pada folder wise
 
+Jalankan shell script dibawah ini untuk meng-install service bind9 yang akan dibutuhkan
+
+```bash
+apt clean
+apt update
+apt upgrade
+apt install -y bind9
+clear
+service bind9
+```
+Setelah selesai baru kita jalankan bash untuk setup domainnya
+```bash
+#setup DNS Master (domain name) at wise
+
+mkdir /etc/bind/wise
+
+#Buat domain	
+echo "
+zone \"wise.f05.com\" {
+	type master;
+	file \"/etc/bind/wise/wise.f05.com\";
+};
+
+" > /etc/bind/named.conf.local
+
+rndc reload
+
+cp /etc/bind/db.local /etc/bind/wise/wise.f05.com
+
+#Set domain name
+echo ";
+; BIND data file for local loopback interface
+;
+\$TTL    604800
+@       IN      SOA    wise.f05.com. root.wise.f05.com. (
+                             2           ; Serial
+                        604800           ; Refresh
+                         86400           ; Retry
+                       2419200           ; Expire
+                        604800 )         ; Negative Cache TTL
+;
+@       IN      NS      wise.f05.com.
+@       IN      A       10.31.2.2 ; IP WISE
+www     IN      CNAME   wise.f05.com.
+@       IN      AAAA    ::1
+" > /etc/bind/wise/wise.f05.com
+
+#DONE set domain name with CNAME
+
+service bind9 restart
+clear
+echo "Set Up www.wise.f05.com done"
+
+```
 
 
 ## 3. Setelah itu ia juga ingin membuat subdomain eden.wise.yyy.com dengan alias www.eden.wise.yyy.com yang diatur DNS-nya di WISE dan mengarah ke Eden
