@@ -109,10 +109,30 @@ clear
 echo "Set Up www.wise.f05.com done"
 
 ```
-
-
 ## 3. Setelah itu ia juga ingin membuat subdomain eden.wise.yyy.com dengan alias www.eden.wise.yyy.com yang diatur DNS-nya di WISE dan mengarah ke Eden
 
+```bash
+#Tambahkan prefix eden. dan www.eden. pada file /etc/bind/wise/wise.f05.com
+echo ";
+; BIND data file for local loopback interface
+;
+\$TTL    604800
+@       IN      SOA    wise.f05.com. root.wise.f05.com. (
+                             2           ; Serial
+                        604800           ; Refresh
+                         86400           ; Retry
+                       2419200           ; Expire
+                        604800 )         ; Negative Cache TTL
+;
+@       IN      NS      wise.f05.com.
+@       IN      A       10.31.2.2 ; IP WISE
+www     IN      CNAME   wise.f05.com.
+eden     IN    A     10.31.3.3
+www.eden    IN A    10.31.3.3
+@       IN      AAAA    ::1
+" > /etc/bind/wise/wise.f05.com
+```
+				   
 ## 4. Buat juga reverse domain untuk domain utama 
 
 ## 5. Agar dapat tetap dihubungi jika server WISE bermasalah, buatlah juga Berlint sebagai DNS Slave untuk domain utama 
